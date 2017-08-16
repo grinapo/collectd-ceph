@@ -53,7 +53,7 @@ class CephLatencyPlugin(base.Base):
 
         output = None
         try:
-            command = "timeout 30s rados --cluster %s -p %s bench 10 write -t 1 -b 65536" % (self.cluster, format(self.testpool))
+            command = "timeout 60s rados --cluster %s -p %s bench 10 write -t 1 -b 65536" % (self.cluster, format(self.testpool))
             output = subprocess.check_output(command, shell=True)
         except Exception as exc:
             collectd.error("ceph-latency: failed to run rados bench :: %s :: %s"
