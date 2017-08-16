@@ -67,8 +67,13 @@ class CephPGPlugin(base.Base):
             data[ceph_cluster][osd_id]['kb_total'] = osd['kb']
             data[ceph_cluster][osd_id]['snap_trim_queue_len'] = osd['snap_trim_queue_len']
             data[ceph_cluster][osd_id]['num_snap_trimming'] = osd['num_snap_trimming']
-            data[ceph_cluster][osd_id]['apply_latency_ms'] = osd['fs_perf_stat']['apply_latency_ms']
-            data[ceph_cluster][osd_id]['commit_latency_ms'] = osd['fs_perf_stat']['commit_latency_ms']
+            # has been renamed in luminous
+            if 'fs_perf_stat' in osd:
+                perfname = 'fs_perf_stat'
+            elif 'perf_stat' in osd:
+                perfname = 'perf_stat'
+            data[ceph_cluster][osd_id]['apply_latency_ms'] = osd[perfname]['apply_latency_ms']
+            data[ceph_cluster][osd_id]['commit_latency_ms'] = osd[perfname]['commit_latency_ms']
 
         return data
 
