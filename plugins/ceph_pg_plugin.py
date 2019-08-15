@@ -52,15 +52,24 @@ class CephPGPlugin(base.Base):
         json_data = json.loads(output)
 
         pg_data = data[ceph_cluster]['pg']
+
+        # changed in luminous
+        if 'pg_map' in json_data:
+            pg_stats = json_data['pg_map']['pg_stats']
+            osd_stats = json_data['pg_map']['osd_stats']
+        else:
+            pg_stats = json_data['pg_stats']
+            osd_stats = json_data['osd_stats']
+
         # number of pgs in each possible state
-        for pg in json_data['pg_stats']:
+        for pg in pg_stats:
             for state in pg['state'].split('+'):
                 if not pg_data.has_key(state):
                     pg_data[state] = 0
                 pg_data[state] += 1
     
         # osd perf data
-        for osd in json_data['osd_stats']:
+        for osd in osd_stats:
             osd_id = "osd-%s" % osd['osd']
             data[ceph_cluster][osd_id] = {}
             data[ceph_cluster][osd_id]['kb_used'] = osd['kb_used']
